@@ -1,0 +1,20 @@
+Nome do arquivo CSV: DBXV2_sujo.csv
+Linhas x colunas: 3120 x 9
+K-NN — acurácia final no teste (random_state=42, test_size=0.30, stratify=y): 0.0500
+K-Means — k escolhido: 5
+K-Means — silhueta final: 0.358
+Data de entrega ao colega: 27/08/2026
+
+Dicionário de Dados (Regras e Especificações)
+
+id_patrulheiro: Identificador único do jogador no formato "PT-XXXX".
+nivel: Nível numérico do personagem, com limite mínimo de 1 e teto máximo lógico de 199.
+tempo_jogo_horas: Total de horas acumuladas na conta, sendo o mínimo de 5 e o máximo de 500 horas.
+medalhas_pt: Quantidade de moedas/medalhas premium acumuladas, que logicamente não podem assumir valores negativos.
+raca: Classe do personagem, que deve pertencer exclusivamente a uma das cinco categorias válidas (Saiyan, Human, Majin, Namekian, Frieza).
+quest_sucess: Porcentagem de sucesso em conclusões de missões, variando entre 20 e 100.
+ki_maximo: Pontos de status investidos em Ki, com distribuição válida estritamente entre 0 e 200 pontos.
+stamina_maxima: Pontos de status investidos em Stamina, com distribuição válida estritamente entre 0 e 200 pontos.
+mentor_atual: Mestre que o patrulheiro acompanha no momento (ex: Whis, Goku, Piccolo) ou a indicação explícita "nenhum".
+
+Objetivo: com base nos dados informados de cada personagem, calcular qual deve ser o melhor mentor para o player em específico.
