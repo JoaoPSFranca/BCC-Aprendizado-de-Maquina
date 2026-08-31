@@ -1,0 +1,5 @@
+nome do arquivo csv: plantas.csv
+linhas x colunas: 3000x6
+acurácia final no teste knn: 0.8622
+k escolhido no kmeans: 2
+silhueta final no kmeans: 0.2620
