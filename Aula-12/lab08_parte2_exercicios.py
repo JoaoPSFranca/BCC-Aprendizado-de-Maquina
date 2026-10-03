@@ -171,32 +171,72 @@ secao(3, "COMPARACAO PAREADA COM 10 DOBRAS")
 #          Regressao Logistica (max_iter=1000), SVM (kernel="rbf") e
 #          Arvore de Decisao (max_depth=4). Use com_prep(...) em todos.
 
+dobras10 = StratifiedKFold(n_splits=10, shuffle=True, random_state=SEMENTE)
+
+notas_rl = cross_val_score(com_prep(LogisticRegression(max_iter=1000)), X, y, cv=dobras10)
+notas_svm = cross_val_score(com_prep(SVC(kernel="rbf", random_state=SEMENTE)), X, y, cv=dobras10)
+notas_arv = cross_val_score(com_prep(DecisionTreeClassifier(max_depth=4, random_state=SEMENTE)), X, y, cv=dobras10)
+
 # TODO 3b: imprima media e desvio de cada um
+print(f"Regressao Logistica: media={notas_rl.mean():.3f}, desvio={notas_rl.std():.3f}")
+print(f"SVM: media={notas_svm.mean():.3f}, desvio={notas_svm.std():.3f}")
+print(f"Arvore de Decisao: media={notas_arv.mean():.3f}, desvio={notas_arv.std():.3f}")
 
 # TODO 3c: para os pares (Regressao Logistica - Arvore) e (SVM - Regressao
 #          Logistica), calcule a diferenca dobra a dobra e imprima a
 #          diferenca media e quantas dobras cada lado venceu, empatou e perdeu
 
+diff_rl_arv = notas_rl - notas_arv
+vit_rl_arv = (diff_rl_arv > 0).sum()
+emp_rl_arv = (diff_rl_arv == 0).sum()
+der_rl_arv = (diff_rl_arv < 0).sum()
+
+print(f"\nRL vs Arvore: diff media={diff_rl_arv.mean():.3f} | RL venceu {vit_rl_arv}, Arvore venceu {der_rl_arv}, empates {emp_rl_arv}")
+
+diff_svm_rl = notas_svm - notas_rl
+vit_svm_rl = (diff_svm_rl > 0).sum()
+emp_svm_rl = (diff_svm_rl == 0).sum()
+der_svm_rl = (diff_svm_rl < 0).sum()
+
+print(f"SVM vs RL: diff media={diff_svm_rl.mean():.3f} | SVM venceu {vit_svm_rl}, RL venceu {der_svm_rl}, empates {emp_svm_rl}")
+
 # ============================================================ EXERCICIO 4 (2,0)
 secao(4, "CLASSES DESBALANCEADAS E CUSTO DO ERRO")
 
 # TODO 4a: gere o problema desbalanceado:
-#   X_r, y_r = make_classification(n_samples=1000, n_features=6,
-#       n_informative=4, n_redundant=0, n_clusters_per_class=1,
-#       weights=[0.90, 0.10], flip_y=0.0, class_sep=1.0, random_state=SEMENTE)
-#   e divida em treino/teste (test_size=0.30, random_state=SEMENTE, stratify=y_r)
+X_r, y_r = make_classification(n_samples=1000, n_features=6,
+    n_informative=4, n_redundant=0, n_clusters_per_class=1,
+    weights=[0.90, 0.10], flip_y=0.0, class_sep=1.0, random_state=SEMENTE)
+
+X_tr, X_te, y_tr, y_te = train_test_split(X_r, y_r, test_size=0.30, random_state=SEMENTE, stratify=y_r)
 
 # TODO 4b: treine (1) DummyClassifier(strategy="most_frequent"),
 #          (2) LogisticRegression(max_iter=1000) e
 #          (3) LogisticRegression(max_iter=1000, class_weight="balanced")
+candidatos = {
+    "Dummy": DummyClassifier(strategy="most_frequent"),
+    "LogReg": LogisticRegression(max_iter=1000),
+    "LogReg_Balanced": LogisticRegression(max_iter=1000, class_weight="balanced"),
+}
 
 # TODO 4c: para cada um, imprima acuracia, precisao, recall, F1 e os
 #          numeros FN (fraudes perdidas) e FP (alarmes falsos)
-
 # TODO 4d: suponha que perder uma fraude (FN) custa 10 vezes mais que um
 #          alarme falso (FP). Calcule custo = 10*FN + 1*FP de cada modelo
 #          e imprima qual tem o menor custo
+linhas = []
+for nome, modelo in candidatos.items():
+    modelo.fit(X_tr, y_tr)
+    y_prev = modelo.predict(X_te)
+    tn, fp, fn, tp = confusion_matrix(y_te, y_prev).ravel()
+    custo = 10 * fn + 1 * fp
+    linhas.append((nome, accuracy_score(y_te, y_prev), precision_score(y_te, y_prev, zero_division=0),
+                   recall_score(y_te, y_prev), f1_score(y_te, y_prev), fn, fp, custo))
 
+res = pd.DataFrame(linhas, columns=["modelo", "acuracia", "precisao", "recall", "f1",
+                                     "FN", "FP", "custo"]).set_index("modelo").round(3)
+print(res)
+print(f"\nModelo com menor custo: {res['custo'].idxmin()} (Custo = {res['custo'].min()})")
 
 # ============================================================ EXERCICIO 5 (2,0)
 secao(5, "VAZAMENTO DE DADOS")
@@ -205,17 +245,32 @@ secao(5, "VAZAMENTO DE DADOS")
 #          rng = np.random.default_rng(100 + semente),
 #          X_ruido = rng.normal(size=(80, 1500)), y_ruido = rng.integers(0, 2, 80)
 #          (puro ruido - nao ha padrao nenhum)
-
 # TODO 5b: FORMA ERRADA - selecione os 10 melhores atributos com
 #          SelectKBest(f_classif, k=10).fit_transform(X_ruido, y_ruido) usando
 #          TODAS as linhas e depois avalie LogisticRegression(max_iter=1000)
 #          com cross_val_score (StratifiedKFold(5, shuffle=True, random_state=SEMENTE))
-
 # TODO 5c: FORMA CERTA - coloque SelectKBest e LogisticRegression dentro de
 #          um Pipeline e passe o Pipeline (com os dados ORIGINAIS X_ruido)
 #          ao cross_val_score
 
+errado, certo = [], []
+for semente in range(20):
+    rng = np.random.default_rng(100 + semente)
+    X_ruido = rng.normal(size=(80, 1500))
+    y_ruido = rng.integers(0, 2, 80)
+    dobras = StratifiedKFold(5, shuffle=True, random_state=SEMENTE)
+
+    # ERRADO
+    X_sel = SelectKBest(f_classif, k=10).fit_transform(X_ruido, y_ruido)
+    errado.append(cross_val_score(LogisticRegression(max_iter=1000), X_sel, y_ruido, cv=dobras).mean())
+
+    # CERTO
+    pipe = Pipeline([("sel", SelectKBest(f_classif, k=10)), ("modelo", LogisticRegression(max_iter=1000))])
+    certo.append(cross_val_score(pipe, X_ruido, y_ruido, cv=dobras).mean())
+
 # TODO 5d: imprima a acuracia media das duas formas nas 20 repeticoes
+print(f"FORMA ERRADA: acuracia media = {np.mean(errado):.3f}")
+print(f"FORMA CERTA: acuracia media = {np.mean(certo):.3f}")
 
 
 # ============================================================ RELATORIO
