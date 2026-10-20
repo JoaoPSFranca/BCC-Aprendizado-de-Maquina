@@ -60,7 +60,10 @@ BCC-Aprendizado-de-Maquina/
 
 - **`atividade_01_limpeza_dados/`**: Tratamento de dados brutos de vendas, resolução de inconsistências e resumo de transformações.
 - **`atividade_dupla_knn_kmeans/`**: Atividade colaborativa prática em dupla envolvendo criação/tratamento de dados com regras de negócio (Dragon Ball Xenoverse 2 - DBXV2 e base de plantas), com aplicação de K-NN e K-Means.
-- **`atividade_tres_bases/`**: Desafio prático integrador com três problemas distintos: Churn (Classificação), Imóveis (Regressão) e Clientes (Agrupamento).
+- **`atividade_tres_bases/`**: Desafio prático integrador com três problemas distintos:
+  - `resolucao_base1_classificacao_churn.ipynb`: Classificação Binária supervisionada de Churn (comparação de modelos, classes balanceadas, métricas F1/ROC-AUC e análise de custos).
+  - `resolucao_base2_regressao_imoveis.ipynb`: Regressão supervisionada para previsão de preços de imóveis (tratamento de erro de digitação, métricas MAE/RMSE/R² e análise de resíduos).
+  - `resolucao_base3_agrupamento_clientes.ipynb`: Aprendizado Não Supervisionado de Agrupamento/Clustering (seleção de features, varredura de K com Silhueta/Davies-Bouldin, K-Means vs Hierárquico, personas e projeção PCA 2D).
 
 ---
 
