@@ -3,7 +3,7 @@ Aprendizado de Maquina - IFSP Presidente Epitacio
 Laboratorio - Implementacao de um neuronio artificial e comparacao de funcoes de ativacao
 ***ARQUIVO DO ALUNO***
 
-NOME: João Pedro S. França  PRONTUARIO: pe3021114  DATA: 10/11/2026
+NOME: João Pedro S. Franca  PRONTUARIO: pe3021114  DATA: 10/11/2026
 
 INSTRUCOES
   - Preencha os trechos marcados com  # TODO
@@ -32,7 +32,6 @@ warnings.filterwarnings("ignore")
 SEMENTE = 42
 pd.set_option("display.width", 110)
 
-
 def secao(n, titulo):
     print()
     print("=" * 70)
@@ -49,27 +48,21 @@ secao(1, "O NEURONIO EM NUMPY")
 def degrau(z):
     return np.where(np.asarray(z, dtype=float) >= 0, 1.0, 0.0)
 
-
 def identidade(z):
     return np.asarray(z, dtype=float)
-
 
 def sigmoide(z):
     return 1.0 / (1.0 + np.exp(-np.asarray(z, dtype=float)))
 
-
 def tanh(z):
     return np.tanh(np.asarray(z, dtype=float))
-
 
 def relu(z):
     return np.maximum(0.0, np.asarray(z, dtype=float))
 
-
 def leaky_relu(z, alpha=0.01):
     z = np.asarray(z, dtype=float)
     return np.where(z > 0, z, alpha * z)
-
 
 ATIVACOES = {
     "degrau": degrau,
@@ -97,7 +90,6 @@ class Neuronio:
 
     def saida(self, X):
         return ATIVACOES[self.ativacao](self.z(X))
-
 
 x_1b = np.array([3.0, 1.0, -2.0])
 w_1b = np.array([0.2, -0.5, 0.6])
@@ -131,7 +123,6 @@ confere_tanh = np.allclose(tanh(zs_ref), REF_TANH, atol=5e-4)
 print(f"Sigmoide confere com referencia: {confere_sig}")
 print(f"Tanh confere com referencia:     {confere_tanh}")
 
-
 # ============================================================ EXERCICIO 2 (1,5)
 secao(2, "COMPARANDO AS ATIVACOES NAS MESMAS ENTRADAS")
 
@@ -149,31 +140,24 @@ print(tab2.round(3).to_string())
 #          ReLU nao tem derivada). Imprima a maior diferenca de cada uma
 z_teste = np.array([-3.0, -1.0, -0.5, 0.5, 1.0, 3.0])
 
-
 def d_degrau(z):
     return np.zeros_like(np.asarray(z, dtype=float))
 
-
 def d_identidade(z):
     return np.ones_like(np.asarray(z, dtype=float))
-
 
 def d_sigmoide(z):
     s = sigmoide(z)
     return s * (1.0 - s)
 
-
 def d_tanh(z):
     return 1.0 - np.tanh(np.asarray(z, dtype=float)) ** 2
-
 
 def d_relu(z):
     return np.where(np.asarray(z, dtype=float) > 0, 1.0, 0.0)
 
-
 def d_leaky_relu(z, alpha=0.01):
     return np.where(np.asarray(z, dtype=float) > 0, 1.0, alpha)
-
 
 DERIVADAS = {
     "degrau": d_degrau,
@@ -211,7 +195,6 @@ for nome in ["degrau", "sigmoide", "tanh", "relu", "leaky_relu"]:
     })
 tab_2c = pd.DataFrame(linhas_2c).set_index("ativacao")
 print(tab_2c.round(3).to_string())
-
 
 # ============================================================ EXERCICIO 3 (1,5)
 secao(3, "PORTAS LOGICAS, BUSCA EM GRADE E ESCALA DOS PESOS")
@@ -265,15 +248,12 @@ for k_val in [1, 10]:
     saidas_sig = [n_sig.saida(e) for e in entradas2]
     print(f"k = {k_val:>2}: {[round(float(val), 4) for val in saidas_sig]}")
 
-
 # ============================================================ EXERCICIO 4 (1,5)
 secao(4, "DUAS CAMADAS: XOR E O COLAPSO SEM NAO LINEARIDADE")
-
 
 def camada(X, W, b, ativacao):
     """Camada densa: W tem formato (neuronios, entradas); b, (neuronios,)."""
     return ATIVACOES[ativacao](np.asarray(X, dtype=float) @ W.T + b)
-
 
 E = np.array(entradas2, dtype=float)
 
@@ -319,7 +299,6 @@ Y_relu = camada(H_relu, W2_relu, b2_relu, "identidade")
 print("Camada oculta ReLU:\n", H_relu)
 print("Saida XOR (identidade):", Y_relu.ravel().tolist())
 
-
 # ============================================================ EXERCICIO 5 (1,5)
 secao(5, "SATURACAO, GRADIENTE E RELU MORTA")
 
@@ -334,7 +313,6 @@ def cadeia(x0, w, L, ativacao):
         grad *= w * DERIVADAS[ativacao](z)
         a = float(ATIVACOES[ativacao](z))
     return a, grad
-
 
 # TODO 5b: com x0 = 0,5, imprima |d a_L / d x0| para L em [1, 5, 10, 20, 50] e
 #          para sigmoide, tanh, relu e leaky_relu, duas vezes: com w = 1,0 e
@@ -373,7 +351,6 @@ for b_val in bs_5c:
 df_5c = pd.DataFrame(linhas_5c).set_index("b")
 print()
 print(df_5c.round(3).to_string())
-
 
 # ============================================================ EXERCICIO 6 (1,5)
 secao(6, "O NEURONIO NA IRIS: REGRESSAO LOGISTICA E LINEAR")
@@ -438,7 +415,6 @@ print(f"Acuracia Regressao Linear (y >= 0.5): {acc_lin:.3f}")
 print(f"Saidas da Regressao Linear fora de [0, 1]: {fora_lin} (min = {min_lin:.3f}, max = {max_lin:.3f})")
 print(f"Saidas da Sigmoide fora de [0, 1]: {fora_sig}")
 
-
 # ============================================================ EXERCICIO 7 (1,0)
 secao(7, "SOFTMAX: ESTABILIDADE E TEMPERATURA")
 
@@ -451,12 +427,10 @@ def softmax_ingenua(z):
     e = np.exp(z)
     return e / np.sum(e)
 
-
 def softmax(z, T=1.0):
     z = np.asarray(z, dtype=float) / T
     e = np.exp(z - np.max(z))
     return e / np.sum(e)
-
 
 z_grande = np.array([1000.0, 1001.0, 1002.0])
 with np.errstate(all="ignore"):
@@ -488,7 +462,6 @@ print(f"softmax([2, 0.5])[0] = {p_sm:.6f}")
 print(f"sigmoide(2 - 0.5)    = {p_sig:.6f}")
 print(f"Iguais: {np.isclose(p_sm, p_sig)}")
 
-
 # ============================================================ RELATORIO
 """
 =======================================================================
@@ -498,9 +471,9 @@ RELATORIO  (vale 60% da nota desta sessao)
 Ex.1 - (a) Qual e a unica diferenca de codigo entre calcular a saida de
        UM vetor e de um LOTE? (b) Por que o mesmo z produz saidas tao
        diferentes conforme a ativacao? Use os numeros da sua tabela.
-    R: (a) Nao ha diferenca no codigo: o operador @ (ou np.dot) realiza tanto o produto
+    R: (a) Nao ha diferenca no codigo: o @ (ou np.dot) realiza tanto o produto
        escalar para um unico vetor (d,) quanto o produto matriz-vetor para um lote (n, d),
-       com a adicao do vies b sendo transmitida por broadcasting em ambos os casos.
+       com a adicao do b sendo transmitida por broadcasting em ambos os casos.
        (b) Porque cada ativacao aplica uma transformacao matematica diferente ao valor z.
        Para z = -1.0, o degrau resulta em 0.0 (pois z < 0); a identidade mantem -1.0; a
        sigmoide comprime suavemente em 0.269; a tanh comprime simetricamente em -0.762;
